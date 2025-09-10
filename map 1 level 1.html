@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 1: Whole Numbers - Dark Theme</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 100%);
+    min-height: 100vh;
+    margin: 0;
+    padding: 30px;
+    color: #e2e8f0;
+  }
+  
+  h1 {
+    text-align: center;
+    color: #f1f5f9;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  }
+  
+  #quiz-box {
+    max-width: 700px;
+    margin: auto;
+    padding: 30px;
+    background: rgba(30, 30, 63, 0.95);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    border: 1px solid #2d2d5f;
+    backdrop-filter: blur(10px);
+  }
+  
+  /* Audio Controls Styling */
+  #audio-controls {
+    text-align: center;
+    margin-bottom: 25px;
+    padding: 20px;
+    background: rgba(26, 26, 58, 0.8);
+    border-radius: 12px;
+    border: 1px solid #3d3d6b;
+  }
+  
+  .audio-btn {
+    padding: 12px 20px;
+    margin: 0 8px 10px 8px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  #play-tutorial {
+    background: linear-gradient(135deg, #059669, #10b981);
+    color: white;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+  }
+  
+  #play-tutorial:hover {
+    background: linear-gradient(135deg, #047857, #059669);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  }
+  
+  #play-question {
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    color: white;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+  }
+  
+  #play-question:hover {
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+  }
+  
+  #stop-audio {
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+    color: white;
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+  }
+  
+  #stop-audio:hover {
+    background: linear-gradient(135deg, #b91c1c, #dc2626);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+  }
+  
+  .audio-status {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #94a3b8;
+    font-style: italic;
+    background: rgba(0,0,0,0.2);
+    padding: 8px 12px;
+    border-radius: 6px;
+    display: inline-block;
+  }
+  
+  .tutorial-section {
+    background: linear-gradient(135deg, #2d1b69, #4c1d95);
+    border: 1px solid #6d28d9;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+  }
+  
+  .tutorial-title {
+    font-weight: bold;
+    color: #c4b5fd;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+  }
+  
+  #question {
+    font-size: 20px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #f1f5f9;
+    line-height: 1.4;
+    text-align: center;
+    background: rgba(0,0,0,0.2);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #6366f1;
+  }
+  
+  .option {
+    display: block;
+    padding: 18px;
+    margin: 12px 0;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #2a2a4a, #383858);
+    color: #e2e8f0;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    font-weight: 500;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .option::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.5s;
+  }
+  
+  .option:hover::before {
+    left: 100%;
+  }
+  
+  .option:hover {
+    background: linear-gradient(135deg, #3d3d6b, #4f4f7f);
+    border: 2px solid #6366f1;
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
+  }
+
+
+  #next-level-btn {
+    margin: 20px auto;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #059669, #10b981);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: none;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+  }
+
+
+  #next-level-btn:hover {
+    background: linear-gradient(135deg, #047857, #059669);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  }
+  
+  .correct {
+    background: linear-gradient(135deg, #059669, #10b981) !important;
+    border: 2px solid #34d399 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4) !important;
+    animation: correctPulse 0.6s ease-in-out;
+  }
+  
+  .wrong {
+    background: linear-gradient(135deg, #dc2626, #ef4444) !important;
+    border: 2px solid #f87171 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4) !important;
+    animation: wrongShake 0.6s ease-in-out;
+  }
+  
+  @keyframes correctPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  
+  @keyframes wrongShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+  
+  #feedback {
+    margin-top: 20px;
+    font-weight: bold;
+    font-size: 20px;
+    text-align: center;
+    color: #f1f5f9;
+    padding: 15px;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.3);
+  }
+  
+  #next-btn, #retry-btn {
+    margin: 20px auto;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: none;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+  }
+  
+  #next-btn:hover, #retry-btn:hover {
+    background: linear-gradient(135deg, #3730a3, #6d28d9);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    body {
+      padding: 15px;
+    }
+    
+    #quiz-box {
+      padding: 20px;
+    }
+    
+    h1 {
+      font-size: 2em;
+    }
+    
+    .audio-btn {
+      display: block;
+      margin: 10px auto;
+      width: 200px;
+    }
+  }
+</style>
+</head>
+<body>
+<h1>🌙 Chapter 1: Whole Numbers</h1>
+<div id="quiz-box">
+  
+  <!-- Audio Tutorial Section -->
+  <div class="tutorial-section">
+    <div class="tutorial-title">🎧 Audio Tutorial</div>
+    <div id="audio-controls">
+      <button class="audio-btn" id="play-tutorial" onclick="playTutorial()">▶ Play Tutorial</button>
+      <button class="audio-btn" id="play-question" onclick="readQuestion()">🔊 Read Question</button>
+      <button class="audio-btn" id="stop-audio" onclick="stopAudio()">⏹ Stop Audio</button>
+      <div class="audio-status" id="audio-status">Click "Play Tutorial" to start learning!</div>
+    </div>
+  </div>
+  
+  <div id="question"></div>
+  <div id="options"></div>
+  <button id="next-btn" onclick="nextQuestion()">Next Question</button>
+  <button id="retry-btn" onclick="retryQuiz()">Try Again</button>
+  <button id="next-level-btn" onclick="goNextLevel()">Next Level</button>
+  <div id="feedback"></div>
+</div>
+
+
+<script>
+const questions = {
+  1: {
+    q: "What is 1/2 expressed as a decimal?",
+    options: { a: "0.25", b: "0.5", c: "0.75", d: "1" },
+    answer: "b",
+    explanation: "One half equals zero point five. When you divide 1 by 2, you get 0.5."
+  },
+  2: {
+    q: "Which of the following is equivalent to 3/4?",
+    options: { a: "0.25", b: "0.5", c: "0.75", d: "1" },
+    answer: "c",
+    explanation: "Three fourths equals zero point seven five. When you divide 3 by 4, you get 0.75."
+  },
+  3: {
+    q: "Convert 0.2 into a fraction.",
+    options: { a: "1/2", b: "1/5", c: "2/5", d: "1/10" },
+    answer: "b",
+    explanation: "Zero point two equals one fifth. This is because 0.2 means 2 tenths, which simplifies to 1 fifth."
+  },
+  4: {
+    q: "What is 25% of 200?",
+    options: { a: "25", b: "40", c: "50", d: "75" },
+    answer: "c",
+    explanation: "25 percent of 200 equals 50. You can calculate this by multiplying 200 by 0.25, or by finding one quarter of 200."
+  }
+};
+
+
+const MAX_QUESTIONS = 3;
+let keys = Object.keys(questions);
+let currentQ = null;
+let score = 0;
+let questionCount = 0;
+let currentSpeech = null;
+let asked = []; // track asked questions to avoid repeats
+
+
+// Enhanced Audio Tutorial Content with Indian English teaching style
+const tutorialContent = {
+  intro: "Hello students! I am your mathematics teacher, and I am very excited to help you understand whole numbers, decimals, and fractions today. Let us learn together and make mathematics easy!",
+  fractions: "Now, let us understand fractions properly. Think of fractions like cutting a roti into pieces. The bottom number, which we call denominator, tells us into how many pieces the roti is cut. The top number, the numerator, tells us how many pieces we are taking.",
+  decimals: "Next, we will learn about decimals! Decimals are another way to write fractions, but we use a decimal point. When you see 0.5, it means five parts out of ten, which is exactly same as one half. Very simple, isn't it?",
+  percentages: "Percentages are very useful in daily life! When we say percentage, we mean parts out of 100. So 25 percent means 25 out of every 100 parts. It is like saying one-fourth of something!",
+  tips: "Here are some important tips for you: To convert fraction to decimal, simply divide the numerator by denominator. To find percentage of any number, first convert percentage to decimal, then multiply. Practice well and you will master this! Now let us begin your quiz."
+};
+
+
+// Speak function wrapper
+function speak(text, callback) {
+  if ('speechSynthesis' in window) {
+    if (speechSynthesis.speaking) {
+      speechSynthesis.cancel();
+    }
+    if (speechSynthesis.getVoices().length === 0) {
+      speechSynthesis.addEventListener('voiceschanged', () => {
+        speakWithIndianVoice(text, callback);
+      });
+    } else {
+      speakWithIndianVoice(text, callback);
+    }
+  } else {
+    document.getElementById('audio-status').innerText = '❌ Speech synthesis not supported in this browser';
+    if (callback) callback();
+  }
+}
+
+
+// ✅ Updated Indian Voice Selection (removed "en-IN")
+function speakWithIndianVoice(text, callback) {
+  currentSpeech = new SpeechSynthesisUtterance(text);
+  const voices = speechSynthesis.getVoices();
+  
+  // Try to find an Indian voice using only hi-IN
+  let selectedVoice = voices.find(voice =>
+    voice.lang === "hi-IN"
+  );
+  
+  // If no hi-IN voice, fallback to any Indian named voice
+  if (!selectedVoice) {
+    selectedVoice = voices.find(voice =>
+      voice.name.toLowerCase().includes("india") ||
+      voice.name.toLowerCase().includes("hindi") ||
+      voice.name.toLowerCase().includes("kalpana") ||
+      voice.name.toLowerCase().includes("heera")
+    );
+  }
+  
+  // Fallback to normal English if nothing found
+  if (!selectedVoice) {
+    selectedVoice = voices.find(voice => voice.lang.startsWith("en"));
+  }
+  
+  if (selectedVoice) {
+    currentSpeech.voice = selectedVoice;
+  }
+  
+  currentSpeech.lang = "en-IN";   // Force Indian English pronunciation
+  currentSpeech.rate = 0.9;       // Slightly slow for clarity
+  currentSpeech.pitch = 1.1;      // Natural pitch
+  currentSpeech.volume = 1;
+  
+  currentSpeech.onstart = () => {
+    document.getElementById("audio-status").innerText =
+      `🔊 Speaking in ${selectedVoice ? selectedVoice.name : "default"} voice...`;
+  };
+  
+  currentSpeech.onend = () => {
+    document.getElementById("audio-status").innerText = "✅ Audio finished";
+    currentSpeech = null;
+    if (callback) callback();
+  };
+  
+  currentSpeech.onerror = () => {
+    document.getElementById("audio-status").innerText = "❌ Audio error occurred";
+    currentSpeech = null;
+    if (callback) callback();
+  };
+  
+  speechSynthesis.speak(currentSpeech);
+}
+
+
+function stopAudio() {
+  if ('speechSynthesis' in window && speechSynthesis.speaking) {
+    speechSynthesis.cancel();
+  }
+  currentSpeech = null;
+  document.getElementById('audio-status').innerText = 'Audio stopped';
+}
+
+
+function playTutorial() {
+  const fullTutorial = `${tutorialContent.intro} 
+${tutorialContent.fractions} 
+${tutorialContent.decimals} 
+${tutorialContent.percentages} 
+${tutorialContent.tips}`;
+  speak(fullTutorial);
+}
+
+
+function readQuestion() {
+  if (currentQ && questions[currentQ]) {
+    const questionData = questions[currentQ];
+    let optionsText = "";
+    for (let key in questionData.options) {
+      optionsText += `Option ${key.toUpperCase()}: ${questionData.options[key]}. `;
+    }
+    const fullText = `${questionData.q} ${optionsText}`;
+    speak(fullText);
+  } else {
+    speak("No question is currently displayed. Please start the quiz first.");
+  }
+}
+
+
+function speakFeedback(isCorrect, explanation) {
+  const correctOptionLetter = questions[currentQ].answer.toUpperCase();
+  const correctOptionText = questions[currentQ].options[questions[currentQ].answer];
+  const feedbackText = isCorrect ?
+    `Correct! Well done. ${explanation}` :
+    `That is not correct. The right answer is option ${correctOptionLetter}: ${correctOptionText}. ${explanation}`;
+  speak(feedbackText);
+}
+
+
+function askQuestion() {
+  document.getElementById("feedback").innerText = "";
+  document.getElementById("next-btn").style.display = "none";
+  document.getElementById("retry-btn").style.display = "none";
+  document.getElementById("next-level-btn").style.display = "none";
+
+
+  if (asked.length >= MAX_QUESTIONS) {
+    endExam();
+    return;
+  }
+
+
+  const remaining = keys.filter(k => !asked.includes(k));
+  if (remaining.length === 0) {
+    endExam();
+    return;
+  }
+  currentQ = remaining[Math.floor(Math.random() * remaining.length)];
+  asked.push(currentQ);
+  questionCount = asked.length;
+
+
+  let qData = questions[currentQ];
+
+
+  document.getElementById("question").innerText = qData.q;
+
+
+  let optionsDiv = document.getElementById("options");
+  optionsDiv.innerHTML = "";
+
+
+  for (let key in qData.options) {
+    let optBtn = document.createElement("div");
+    optBtn.className = "option";
+    optBtn.innerText = key.toUpperCase() + ") " + qData.options[key];
+    optBtn.dataset.key = key;
+    optBtn.onclick = selectOption;
+    optionsDiv.appendChild(optBtn);
+  }
+
+
+  document.getElementById('audio-status').innerText = 'New question loaded. Click "Read Question" to hear it.';
+}
+
+
+function selectOption(e) {
+  let selected = e.currentTarget.dataset.key;
+  let correct = questions[currentQ].answer;
+
+
+  let optionsDiv = document.getElementById("options");
+  let optionButtons = optionsDiv.children;
+
+
+  for (let btn of optionButtons) {
+    let key = btn.dataset.key;
+    if (key === correct) {
+      btn.classList.add("correct");
+    }
+    if (key === selected && selected !== correct) {
+      btn.classList.add("wrong");
+    }
+    btn.onclick = null;
+  }
+
+
+  let feedback = document.getElementById("feedback");
+  const isCorrect = selected === correct;
+  const explanation = questions[currentQ].explanation;
+
+
+  if (isCorrect) {
+    score++;
+    feedback.innerText = "✅ Correct!";
+  } else {
+    feedback.innerText = "❌ Incorrect!";
+  }
+
+
+  speakFeedback(isCorrect, explanation);
+
+
+  document.getElementById("next-btn").style.display = "inline-block";
+}
+
+
+function nextQuestion() {
+  if (asked.length >= MAX_QUESTIONS) {
+    endExam();
+  } else {
+    askQuestion();
+  }
+}
+
+
+function endExam() {
+  document.getElementById("question").innerText = "";
+  document.getElementById("options").innerHTML = "";
+  document.getElementById("next-btn").style.display = "none";
+
+
+  let result;
+  let resultSpeech;
+
+
+  if (score >= 2) {
+    result = `🎉 Congratulations! You passed with ${score}/${MAX_QUESTIONS}.`;
+    resultSpeech = `Excellent work! You have passed the quiz with ${score} out of ${MAX_QUESTIONS} marks. Very well done, student!`;
+    document.getElementById("feedback").innerText = result;
+
+
+    // Show Next Level button
+    document.getElementById("next-level-btn").style.display = "inline-block";
+  } else {
+    result = `😢 You failed with ${score}/${MAX_QUESTIONS}.`;
+    resultSpeech = `You scored ${score} out of ${MAX_QUESTIONS} marks. Do not worry, practice makes perfect! Please try again to improve your understanding.`;
+    document.getElementById("feedback").innerText = result;
+    document.getElementById("retry-btn").style.display = "inline-block";
+  }
+
+
+  speak(resultSpeech);
+}
+
+
+function retryQuiz() {
+  score = 0;
+  questionCount = 0;
+  asked = [];
+  currentQ = null;
+  document.getElementById("feedback").innerText = "";
+  document.getElementById("next-btn").style.display = "none";
+  document.getElementById("retry-btn").style.display = "none";
+  document.getElementById("next-level-btn").style.display = "none";
+  speak("Let us start the quiz again. All the best!");
+  askQuestion();
+}
+
+
+function goNextLevel() {
+  // Save completion before redirecting back
+  let completed = JSON.parse(localStorage.getItem('completedLevels') || '[]');
+  if (!completed.includes(1)) {
+    completed.push(1);
+    localStorage.setItem('completedLevels', JSON.stringify(completed));
+  }
+
+
+  // Go back to main map
+  window.location.href = "map 1.html";
+}
+
+
+// Start first question
+askQuestion();
+
+
+</script>
+</body>
+</html>

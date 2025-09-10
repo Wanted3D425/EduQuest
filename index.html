@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Selection Box</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+ 
+  <div id="logo"><img src="img1.jpg" alt="Logo"></div>
+
+  <div id="selection-box">
+    <div class="card student" onclick="goTo('student.html')">
+      <i class="fa-solid fa-user-group"></i><br>STUDENT
+    </div>
+    <div class="card teacher" onclick="goTo('teacher.html')">
+      <i class="fa-solid fa-person-chalkboard"></i><br>TEACHER
+    </div>
+  </div>
+
+  <script>
+  
+    setTimeout(() => {
+      document.getElementById('logo').style.display = 'none';
+      const box = document.getElementById('selection-box');
+      box.style.display = 'flex';
+
+      
+    document.querySelectorAll('.card').forEach((card, i) => {
+     setTimeout(() => card.classList.add('show'), i * 200);
+    });
+
+    }, 3000);
+
+    function goTo(page) {
+      window.location.href = page;
+    }
+  </script>
+</body>
+</html>

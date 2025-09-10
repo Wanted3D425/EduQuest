@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Randomized Planet Level Map</title>
+<style>
+  body {
+    margin: 0;
+    background: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    flex-direction: column;
+  }
+
+  .planet {
+    position: relative;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: url("img5.jpeg") no-repeat center/cover;
+    box-shadow: 0 0 60px #d07e47;
+    overflow: hidden;
+  }
+
+  .node {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: cyan;
+    box-shadow: 0 0 15px cyan;
+    cursor: pointer;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    font-weight: bold;
+    font-size: 14px;
+    transition: transform 0.2s, background 0.3s, box-shadow 0.3s;
+  }
+
+  .node:hover { transform: scale(1.3); }
+
+  .completed {
+    background: yellow !important;
+    box-shadow: 0 0 20px yellow, 0 0 40px gold !important;
+  }
+
+  .locked {
+    background: cyan !important;
+    box-shadow: 0 0 15px #008cff !important;
+    color: white;
+    cursor: not-allowed;
+  }
+
+  .locked:hover { box-shadow: 0 0 20px #33aaff, 0 0 40px #33aaff !important; }
+
+  .boss {
+    width: 40px;
+    height: 40px;
+    background: red !important;
+    box-shadow: 0 0 25px red, 0 0 50px crimson !important;
+    font-size: 20px;
+    color: white !important;
+  }
+
+  .blink {
+    animation: blink 1s infinite alternate;
+  }
+
+  @keyframes blink {
+    0% { transform: scale(1); box-shadow: 0 0 15px cyan; }
+    100% { transform: scale(1.4); box-shadow: 0 0 30px white; }
+  }
+
+.boss:hover {
+  background: red !important;   /* still red on hover */
+  box-shadow: 0 0 25px red, 0 0 50px crimson !important;  /* stays red glow */
+}
+  
+  svg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  line {
+    stroke: cyan;
+    stroke-width: 2;
+    stroke-dasharray: 6,6;
+    stroke-linecap: round;
+    animation: dash 2s linear infinite;
+  }
+
+  .completed-path {
+    stroke: yellow !important;
+    stroke-dasharray: none !important;
+  }
+
+  @keyframes dash {
+    to { stroke-dashoffset: -20; }
+  }
+
+  #restartBtn {
+    margin-top: 20px;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #059669, #10b981);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: block;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+  }
+
+  #restartBtn:hover {
+    background: linear-gradient(135deg, #047857, #059669);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  }
+</style>
+</head>
+<body>
+
+<div class="planet">
+  <svg id="paths"></svg>
+</div>
+
+<button id="restartBtn">Restart</button>
+
+<script>
+const planetSize = 500;
+const levelCount = 6;
+const minDistance = 120;
+const planet = document.querySelector(".planet");
+const svg = document.getElementById("paths");
+
+let completedLevels = JSON.parse(localStorage.getItem('completedLevels') || '[]');
+
+function getRandomPosition(existing) {
+  let x, y, valid=false, attempts=0;
+  while(!valid && attempts<500){
+    attempts++;
+    x = Math.random()*(planetSize-80)+40;
+    y = Math.random()*(planetSize-80)+40;
+    let dx = x-planetSize/2;
+    let dy = y-planetSize/2;
+    if(dx*dx+dy*dy>220*220) continue;
+    valid = existing.every(([ex,ey])=>Math.sqrt((x-ex)**2+(y-ey)**2)>=minDistance);
+  }
+  return [x,y];
+}
+
+let positions = [];
+
+function renderNodes(){
+  positions = [];
+  planet.innerHTML = '<svg id="paths"></svg>';
+  const svgEl = document.getElementById("paths");
+
+  for(let i=1;i<=levelCount;i++){
+    const pos = getRandomPosition(positions);
+    positions.push(pos);
+
+    const node = document.createElement("div");
+    node.id = "level"+i;
+    node.className = "node locked";
+    node.style.left = pos[0]+"px";
+    node.style.top = pos[1]+"px";
+
+    if(i === levelCount){
+      node.classList.add("boss");
+      node.textContent = "👹";
+    } else if(completedLevels.includes(i)){
+      node.classList.add("completed");
+      node.classList.remove("locked");
+      node.textContent = i;
+    } else if(i===1 || completedLevels.includes(i-1)){
+      node.classList.remove("locked");
+      node.textContent = i;
+      node.classList.add("blink");
+      node.onclick = ()=>completeLevel(i);
+    } else {
+      node.textContent = "🔒";
+    }
+
+    planet.appendChild(node);
+
+    // Draw dotted line
+    if(i>1){
+      const line = document.createElementNS("http://www.w3.org/2000/svg","line");
+      line.id = "p"+(i-1);
+      line.setAttribute("x1", positions[i-2][0]+14);
+      line.setAttribute("y1", positions[i-2][1]+14);
+      line.setAttribute("x2", pos[0]+14);
+      line.setAttribute("y2", pos[1]+14);
+      if(completedLevels.includes(i-1)) line.classList.add("completed-path");
+      svgEl.appendChild(line);
+    }
+  }
+}
+
+function completeLevel(level){
+  const node = document.getElementById("level"+level);
+  node.classList.add("completed");
+  node.classList.remove("blink");
+
+  if(!completedLevels.includes(level)){
+    completedLevels.push(level);
+    localStorage.setItem('completedLevels', JSON.stringify(completedLevels));
+  }
+
+  if(level>1){
+    const path = document.getElementById("p"+(level-1));
+    if(path) path.classList.add("completed-path");
+  }
+
+  if(level===1){
+    window.location.href="map 1 level 1.html";
+    return;
+  }
+
+  if(level===levelCount){
+    alert("⚔ You defeated the Boss! Game Completed 🎉");
+    return;
+  }
+
+  const nextNode = document.getElementById("level"+(level+1));
+  if(nextNode && !completedLevels.includes(level+1)){
+    nextNode.classList.remove("locked");
+    nextNode.textContent = (level+1===levelCount?"👹":level+1);
+    nextNode.classList.add("blink");
+    nextNode.onclick = ()=>completeLevel(level+1);
+  }
+
+  alert(`✅ Level ${level} completed! Level ${level+1} unlocked.`);
+}
+
+// Restart button
+const restartBtn = document.getElementById("restartBtn");
+restartBtn.onclick = () => {
+  if(confirm("⚠ Are you sure you want to restart? All progress will be lost.")){
+    localStorage.removeItem('completedLevels');
+    completedLevels=[];
+    renderNodes();
+  }
+};
+
+// Initial render
+renderNodes();
+</script>
+
+</body>
+</html>

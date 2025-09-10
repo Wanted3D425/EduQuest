@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduPlay Rural</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: white;
+      text-align: center;
+      background: black;
+      overflow-x: hidden;
+    }
+
+    /* Navbar */
+    nav {
+      background-color: black;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px;
+      box-shadow: 0px 5px 5px 5px rgb(5, 192, 249);
+      flex-wrap: wrap;
+      border-radius: 5px;
+      position: relative;
+      z-index: 10;
+    }
+
+    nav img {
+      border-radius: 50%;
+    }
+
+    .menu {
+      display: flex;
+    }
+
+    .menu li {
+      list-style: none;
+    }
+
+    .menu li a {
+      color: white;
+      padding: 10px;
+      text-decoration: none;
+      font-style: italic;
+    }
+
+    .menu li a:hover {
+      background-color: rgb(5, 192, 249);
+      color: black;
+      border-radius: 3px;
+      transition: 0.3s;
+    }
+
+    .menu-icon {
+      display: none;
+      font-size: 25px;
+      cursor: pointer;
+      color: white;
+      font-weight: bold;
+    }
+
+    .menu-toggle {
+      display: none;
+    }
+
+    @media(max-width:760px) {
+      .menu-icon {
+        display: block;
+      }
+
+      .menu {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .menu-toggle:checked+.menu-icon+.menu {
+        display: flex;
+      }
+
+      li {
+        padding: 10px;
+      }
+    }
+
+    /* Solar System Wrapper */
+    .solar-system {
+      position: relative;
+      height: 100vh; /* keeps system full height */
+      margin-top: 110px; /* <-- space below solar system */
+    }
+
+    /* Sun */
+    .sun {
+      width: clamp(60px, 10vw, 120px);   /* smaller */
+      height: clamp(60px, 10vw, 120px);  /* smaller */
+      background: url("sun.jpeg") no-repeat center/cover;
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 40px 15px yellow;
+      z-index: 1;
+    }
+
+    /* Orbits */
+    .orbit {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      border: 1px dashed rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      animation: rotateOrbit linear infinite;
+      pointer-events: none;
+    }
+
+    .orbit1 {
+      width: clamp(180px, 35vw, 350px);
+      height: clamp(180px, 35vw, 350px);
+      animation-duration: 15s;
+    }
+
+    .orbit2 {
+      width: clamp(250px, 55vw, 500px);
+      height: clamp(250px, 55vw, 500px);
+      animation-duration: 25s;
+    }
+
+    .orbit3 {
+      width: clamp(320px, 75vw, 700px);
+      height: clamp(320px, 75vw, 700px);
+      animation-duration: 35s;
+    }
+
+    @keyframes rotateOrbit {
+      0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+      }
+
+      100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+      }
+    }
+
+    /* Planets */
+  .planet {
+    width: clamp(25px, 5vw, 60px);   /* smaller planets */
+    height: clamp(25px, 5vw, 60px);  /* smaller planets */
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    transform: translate(-50%, -50%);
+    animation: spin 20s linear infinite;
+    cursor: pointer;
+    pointer-events: auto;
+    z-index: 2;
+  }
+
+    #map1 {
+      background-image: url("img3.jpeg");
+    }
+
+    #map2 {
+      background-image: url("img4.jpeg");
+    }
+
+    #map3 {
+      background-image: url("img2.jpeg");
+    }
+
+    @keyframes spin {
+      0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+      }
+
+      100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+      }
+    }
+
+    /* Planet row */
+    .planet-row {
+      position: relative;
+      margin-top: 100px;
+      display: flex;
+      justify-content: center;
+      margin-top: 20px; 
+      gap: clamp(15px, 4vw, 50px);
+      flex-wrap: wrap;
+      z-index: 5;
+    }
+
+    .planet-card {
+      text-align: center;
+      margin-top: 100px;
+      margin-bottom: 60px; 
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+
+  .planet-card img {
+    width: clamp(40px, 8vw, 80px);   /* smaller cards */
+    height: clamp(40px, 8vw, 80px);
+    border-radius: 50%;
+    box-shadow: 0 0 12px white;
+  }
+
+    .planet-card p {
+      margin-top: 10px;
+      font-size: clamp(12px, 2vw, 18px);
+      font-weight: bold;
+    }
+
+    /* Highlight */
+    .planet-card.active {
+      transform: scale(1.2);
+      box-shadow: 0 0 25px 10px cyan;
+    }
+
+    /* Responsive Tweaks */
+    @media (max-width: 600px) {
+      .planet-row {
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+      }
+    }
+
+    @media (min-width: 1600px) {
+      .sun {
+        width: 200px;
+        height: 200px;
+      }
+
+      .orbit1 {
+        width: 400px;
+        height: 400px;
+      }
+
+      .orbit2 {
+        width: 600px;
+        height: 600px;
+      }
+
+      .orbit3 {
+        width: 800px;
+        height: 800px;
+      }
+
+      .planet {
+        width: 120px;
+        height: 120px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <a href="">
+      <img src="img1.jpg" width="80">
+    </a>
+    <input type="checkbox" id="toggle" class="menu-toggle" />
+    <label class="menu-icon" for="toggle">&#9776;</label>
+
+    <ul class="menu">
+      <li><a href=""><i class="fa-solid fa-house-chimney"></i> Home</a></li>
+      <li><a href=""><i class="fa-solid fa-circle-info"></i> About</a></li>
+      <li><a href=""><i class="fa-solid fa-circle-user"></i> Profile</a></li>
+      <li><a href=""><i class="fa-solid fa-user-gear"></i> Setting</a></li>
+      <li><a href=""><i class="fa-brands fa-hire-a-helper"></i> Help</a></li>
+    </ul>
+  </nav>
+
+  <!-- Solar System -->
+  <div class="solar-system">
+    <div class="sun" data-target="sun"></div>
+
+    <div class="orbit orbit1">
+      <div id="map1" class="planet" data-target="mars"></div>
+    </div>
+
+    <div class="orbit orbit2">
+      <div id="map2" class="planet" data-target="venus"></div>
+    </div>
+
+    <div class="orbit orbit3">
+      <div id="map3" class="planet" data-target="jupiter"></div>
+    </div>
+  </div>
+
+<!-- Planet Row -->
+<div class="planet-row">
+  <div class="planet-card" id="sun">
+    <img src="sun.jpeg" alt="sun">
+    <p><b>Cosmix</b> <br> <i>Universe Full Of Challenges</i></p>
+  </div>
+
+  <div class="planet-card" id="mars">
+    <img src="img3.jpeg" alt="Mars">
+    <p><b>Numeron</b> <br> <i>The Planet of Numbers</i></p>
+  </div>
+
+  <div class="planet-card" id="venus">
+    <img src="img4.jpeg" alt="Venus">
+    <p><b>Atomis</b> <br> <i>The Science World</i></p>
+  </div>
+
+  <div class="planet-card" id="jupiter">
+    <img src="img2.jpeg" alt="Jupiter">
+    <p><b>Cosmix</b> <br> <i>Universe Full Of Challenges</i></p>
+  </div>
+</div>
+
+
+  <script>
+    const planets = document.querySelectorAll(".planet");
+    const sun = document.querySelector(".sun");
+
+    planets.forEach(planet => {
+      planet.addEventListener("mouseenter", () => {
+        // pause orbit (parent), keep self-spin running
+        planet.parentElement.style.animationPlayState = "paused";
+        document.getElementById(planet.dataset.target).classList.add("active");
+      });
+
+      planet.addEventListener("mouseleave", () => {
+        // resume orbit
+        planet.parentElement.style.animationPlayState = "running";
+        document.getElementById(planet.dataset.target).classList.remove("active");
+      });
+    });
+
+    // 🌞 Sun hover logic
+    sun.addEventListener("mouseenter", () => {
+      document.getElementById("sun").classList.add("active");
+    });
+
+    sun.addEventListener("mouseleave", () => {
+      document.getElementById("sun").classList.remove("active");
+    });
+
+    // 🪐 Click event for Map1
+    document.getElementById("map1").addEventListener("click", () => {
+      window.location.href = "map 1.html"; // <-- replace with your page link
+    });
+  </script>
+
+
+</body>
+</html>

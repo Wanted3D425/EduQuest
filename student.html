@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login & Sign Up</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, rgb(6, 108, 111), green);
+      overflow: hidden;
+    }
+
+    .container {
+      position: relative;
+      width: 350px;
+      padding: 40px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(8px);
+      text-align: center;
+      color: white;
+      overflow: hidden;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-50px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 28px;
+      letter-spacing: 1px;
+    }
+
+    .input-box {
+      position: relative;
+      margin: 20px 0;
+    }
+
+    .input-box input,
+    .input-box select {
+      width: 100%;
+      padding: 12px 15px;
+      border: none;
+      outline: none;
+      border-radius: 8px;
+      font-size: 16px;
+      color: #333;
+      background: white;
+      transition: 0.3s;
+    }
+
+    .input-box input:focus,
+    .input-box select:focus {
+      background: #fff;
+      box-shadow: 0 0 10px #4facfe, 0 0 20px #43e97b;
+    }
+
+    .btn {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+      background: linear-gradient(90deg, #4facfe, #43e97b);
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px #4facfe, 0 0 25px #43e97b;
+    }
+
+    .toggle {
+      margin-top: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      color: #fff;
+      text-decoration: underline;
+      transition: color 0.3s;
+    }
+
+    .toggle:hover {
+      color: #00f2fe;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Login Form -->
+    <div id="loginForm">
+      <h2>Login</h2>
+      <div class="input-box">
+        <input type="text" placeholder="Username">
+      </div>
+      <div class="input-box">
+        <input type="password" placeholder="Password">
+      </div>
+      <div class="input-box">
+        <select>
+          <option value="" disabled selected>Select the class</option>
+          <option value="6">Class 6</option>
+          <option value="7">Class 7</option>
+          <option value="8">Class 8</option>
+          <option value="9">Class 9</option>
+          <option value="10">Class 10</option>
+          <option value="11">Class 11</option>
+          <option value="12">Class 12</option>
+        </select>
+      </div>
+      <button class="btn" onclick="goTo('homepage.html')">Login</button>
+      <div class="toggle" onclick="toggleForms()">Don’t have an account? Sign Up</div>
+    </div>
+
+    <!-- Sign Up Form -->
+    <div id="signUpForm" class="hidden">
+      <h2>Sign Up</h2>
+      <div class="input-box">
+        <input type="text" placeholder="Username">
+      </div>
+      <div class="input-box">
+        <input type="email" placeholder="Email">
+      </div>
+      <div class="input-box">
+        <input type="password" placeholder="Password">
+      </div>
+      <div class="input-box">
+        <select>
+          <option value="" disabled selected>Select the class</option>
+          <option value="6">Class 6</option>
+          <option value="7">Class 7</option>
+          <option value="8">Class 8</option>
+          <option value="9">Class 9</option>
+          <option value="10">Class 10</option>
+          <option value="11">Class 11</option>
+          <option value="12">Class 12</option>
+        </select>
+      </div>
+      <button class="btn" onclick="goTo('homepage.html')">Sign Up</button>
+      <div class="toggle" onclick="toggleForms()">Already have an account? Login</div>
+    </div>
+  </div>
+
+<script>
+  function toggleForms() {
+    const loginForm = document.getElementById("loginForm");
+    const signUpForm = document.getElementById("signUpForm");
+    loginForm.classList.toggle("hidden");
+    signUpForm.classList.toggle("hidden");
+    addEnterKeySupport(); // reattach Enter key navigation
+  }
+
+  function addEnterKeySupport() {
+    document.querySelectorAll(".container input, .container select").forEach((input, index, allInputs) => {
+      input.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          const next = allInputs[index + 1];
+          if (next) {
+            next.focus();
+          } else {
+            // if no next input, click the button
+            const parentForm = input.closest("div[id$='Form']");
+            parentForm.querySelector("button").click();
+          }
+        }
+      });
+    });
+  }
+
+  // ✅ NEW FUNCTION HERE
+  function goTo(page) {
+    window.location.href = page;
+  }
+
+  // Initialize on page load
+  addEnterKeySupport();
+</script>
+
+</body>
+
+</html>
