@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merged Portal with Batches</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, Arial, sans-serif;
+            background: linear-gradient(135deg, black, green);
+            background-size: 300% 300%;
+            animation: gradientBG 12s ease infinite;
+            color: #f0f0f0;
+            min-height: 100vh;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .auth-container {
+            position: relative;
+            width: 350px;
+            margin: 5% auto;
+            padding: 40px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            text-align: center;
+            color: white;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            letter-spacing: 1px;
+            color: #00ff99;
+            text-shadow: 0 0 10px #00ff99;
+        }
+
+        .input-box {
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .input-box input,
+        .input-box select,
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            outline: none;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #333;
+            background: white;
+            transition: 0.3s;
+        }
+
+        .input-box input:focus,
+        .input-box select:focus,
+        textarea:focus {
+            background: #fff;
+            box-shadow: 0 0 10px #00ff99, 0 0 20px #00ff99;
+        }
+
+        .btn {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            background: linear-gradient(90deg, #00ff99, #00cc66);
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #00ff99, 0 0 25px #00cc66;
+        }
+
+        .toggle {
+            margin-top: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        .toggle:hover {
+            color: #00ff99;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .nav-container {
+            background: rgba(0, 0, 0, 0.85);
+            padding: 1rem;
+            border-bottom: 2px solid #00ff99;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            padding: 0.8rem 1.5rem;
+            background: transparent;
+            border: 2px solid #00ff99;
+            color: #00ff99;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .nav-tab:hover,
+        .nav-tab.active {
+            background: #00ff99;
+            color: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 150, 0.3);
+        }
+
+        .page {
+            display: none;
+            padding: 2rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .sidebar,
+        .card {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 1.5rem;
+            border: 1px solid #00ff99;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 255, 150, 0.4);
+        }
+
+        .card h3 {
+            text-align: center;
+            color: #00ff99;
+            margin-bottom: 1rem;
+        }
+
+        .question-item,
+        .doubt-message,
+        .student-card {
+            background: rgba(0, 255, 150, 0.1);
+            border: 1px solid #00ff99;
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        .boss-container {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .boss-title {
+            color: #00ff99;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px #00ff99;
+        }
+
+        .boss-card {
+            background: rgba(0, 0, 0, 0.85);
+            border: 2px solid #00ff99;
+            border-radius: 15px;
+            padding: 3rem 2rem;
+            box-shadow: 0 0 20px rgba(0, 255, 150, 0.3);
+        }
+
+        .boss-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px gold;
+        }
+
+        .leaderboard {
+            margin-top: 2rem;
+        }
+
+        .batch {
+            font-size: 1.2rem;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 10px;
+            background: rgba(0, 255, 150, 0.1);
+            border: 1px solid #00ff99;
+        }
+
+        .gold {
+            color: gold;
+            font-weight: bold;
+        }
+
+        .silver {
+            color: silver;
+            font-weight: bold;
+        }
+
+        .bronze {
+            color: #cd7f32;
+            font-weight: bold;
+        }
+
+        .student-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: conic-gradient(#00ff99 0deg, rgba(255, 255, 255, 0.1) 0deg 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #00ff99;
+            font-size: 18px;
+            position: relative;
+        }
+
+        .progress-circle::before {
+            content: attr(data-score) "%";
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #00ff99;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page" id="boss-level">
+        <div class="boss-container">
+            <h2 class="boss-title">Boss Level Challenges</h2>
+            <div class="boss-card">
+                <div class="boss-icon">🏆</div>
+                <h3>Coming Soon!</h3>
+                <p>Advanced challenge mode for top-performing students</p>
+            </div>
+            <div class="boss-card" style="margin-top:1.5rem;">
+                <h4 style="color:#00ff99;">Features in Development:</h4>
+                <ul style="list-style:none; padding-left:0; text-align:left;">
+                    <li>🎯 Time-based challenges</li>
+                    <li>🏅 Leaderboard system</li>
+                    <li>🎮 Gamified learning experience</li>
+                    <li>🏆 Achievement badges</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth -->
+    <div id="auth-section" class="auth-container">
+        <div id="loginForm">
+            <h2>Login</h2>
+            <div class="input-box"><input type="text" id="login-username" placeholder="Username"></div>
+            <div class="input-box"><input type="password" id="login-password" placeholder="Password"></div>
+            <div class="input-box">
+                <select id="login-class">
+                    <option value="" disabled selected>Select class</option>
+                    <option value="6">Class 6</option>
+                    <option value="7">Class 7</option>
+                    <option value="8">Class 8</option>
+                    <option value="9">Class 9</option>
+                    <option value="10">Class 10</option>
+                    <option value="11">Class 11</option>
+                    <option value="12">Class 12</option>
+                </select>
+            </div>
+            <button class="btn" onclick="logIn()">Login</button>
+            <div class="toggle" onclick="toggleForms()">Don’t have an account? Sign Up</div>
+        </div>
+        <div id="signUpForm" class="hidden">
+            <h2>Sign Up</h2>
+            <div class="input-box"><input type="text" id="signup-username" placeholder="Username"></div>
+            <div class="input-box"><input type="email" id="signup-email" placeholder="Email"></div>
+            <div class="input-box"><input type="password" id="signup-password" placeholder="Password"></div>
+            <div class="input-box">
+                <select id="signup-class">
+                    <option value="" disabled selected>Select class</option>
+                    <option value="6">Class 6</option>
+                    <option value="7">Class 7</option>
+                    <option value="8">Class 8</option>
+                    <option value="9">Class 9</option>
+                    <option value="10">Class 10</option>
+                    <option value="11">Class 11</option>
+                    <option value="12">Class 12</option>
+                </select>
+            </div>
+            <button class="btn" onclick="signUp()">Sign Up</button>
+            <div class="toggle" onclick="toggleForms()">Already have an account? Login</div>
+        </div>
+    </div>
+
+    <!-- Portal -->
+    <div id="portal-section" class="hidden">
+        <div class="nav-container">
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="switchPage(event,'add-questions')">Add Questions</button>
+                <button class="nav-tab" onclick="switchPage(event,'student-progress')">Student Progress</button>
+                <button class="nav-tab" onclick="switchPage(event,'boss-level')">Boss Level</button>
+                <button class="nav-tab" onclick="switchPage(event,'doubts')">Doubts</button>
+            </div>
+        </div>
+
+        <div class="page active" id="add-questions">
+            <div class="main-container">
+                <div class="card">
+                    <h3>Add New MCQ</h3>
+                    <form id="mcq-form">
+                        <div class="input-box"><textarea id="question" rows="3"
+                                placeholder="Enter question..."></textarea></div>
+                        <div class="input-box"><input type="text" id="opt1" placeholder="Option 1"></div>
+                        <div class="input-box"><input type="text" id="opt2" placeholder="Option 2"></div>
+                        <div class="input-box"><input type="text" id="opt3" placeholder="Option 3"></div>
+                        <div class="input-box"><input type="text" id="opt4" placeholder="Option 4"></div>
+                        <div class="input-box">
+                            <select id="correct">
+                                <option value="">Select correct answer</option>
+                                <option value="1">Option 1</option>
+                                <option value="2">Option 2</option>
+                                <option value="3">Option 3</option>
+                                <option value="4">Option 4</option>
+                            </select>
+                        </div>
+                        <div class="input-box"><input type="number" id="timeLimit" placeholder="Time limit (sec)"
+                                min="10"></div>
+                        <div class="input-box"><input type="file" id="videoFile" accept="video/mp4"></div>
+                        <button type="submit" class="btn">Create Question</button>
+                    </form>
+                </div>
+                <div class="sidebar">
+                    <h3>Saved Questions</h3>
+                    <div id="saved-questions">
+                        <p>No saved questions yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page" id="student-progress">
+            <div class="card">
+                <h3>Student Progress Dashboard</h3>
+                <div id="progress-grid"></div>
+            </div>
+        </div>
+
+        <div class="page" id="boss-level">
+            <div class="boss-container">
+                <h2 class="boss-title">Boss Level Batches</h2>
+                <div class="boss-card">
+                    <div class="boss-icon">🏆</div>
+                    <h3>Top Performers</h3>
+                    <div class="leaderboard" id="leaderboard"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page" id="doubts">
+            <div class="card">
+                <h3>Student Doubts</h3>
+                <div id="doubt-list"></div>
+                <textarea id="teacher-response" placeholder="Type your response..."></textarea>
+                <button class="btn" onclick="sendResponse()">Send Response</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let users = JSON.parse(localStorage.getItem("users") || "[]");
+        let savedQuestions = JSON.parse(localStorage.getItem("savedQuestions") || "[]");
+        const excludedUsers = ["bob", "charlie"];
+
+        function hashPassword(pwd) { return btoa(pwd); }
+        function signUp() {
+            const u = document.getElementById("signup-username").value.trim();
+            const e = document.getElementById("signup-email").value.trim();
+            const p = document.getElementById("signup-password").value.trim();
+            const c = document.getElementById("signup-class").value;
+            if (!u || !e || !p || !c) return alert("❌ All fields required");
+            if (users.some(x => x.username === u)) return alert("⚠️ Username exists");
+            users.push({ username: u, email: e, password: hashPassword(p), userClass: c, score: Math.floor(Math.random() * 101) });
+            localStorage.setItem("users", JSON.stringify(users));
+            alert("✅ Sign Up successful!"); toggleForms();
+        }
+        function logIn() {
+            const u = document.getElementById("login-username").value.trim();
+            const p = document.getElementById("login-password").value.trim();
+            const c = document.getElementById("login-class").value;
+            const user = users.find(x => x.username === u && x.password === hashPassword(p) && x.userClass === c);
+            if (!user) return alert("❌ Invalid credentials");
+            document.getElementById("auth-section").classList.add("hidden");
+            document.getElementById("portal-section").classList.remove("hidden");
+            updateProgressDashboard();
+            updateLeaderboard();
+        }
+        function toggleForms() { document.getElementById("loginForm").classList.toggle("hidden"); document.getElementById("signUpForm").classList.toggle("hidden"); }
+        function switchPage(e, id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(id).classList.add('active'); e.target.classList.add('active');
+            if (id === 'student-progress') updateProgressDashboard();
+            if (id === 'boss-level') updateLeaderboard();
+        }
+
+        document.getElementById('mcq-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const q = document.getElementById('question').value.trim();
+            const opts = [opt1.value.trim(), opt2.value.trim(), opt3.value.trim(), opt4.value.trim()];
+            const corr = correct.value, time = timeLimit.value;
+            const file = videoFile.files[0]; let reader = new FileReader();
+            reader.onload = () => {
+                savedQuestions.push({ question: q, options: opts, correct: corr, timeLimit: time, video: reader.result });
+                localStorage.setItem('savedQuestions', JSON.stringify(savedQuestions));
+                updateSavedQuestions(); mcq - form.reset();
+            };
+            if (file) reader.readAsDataURL(file); else reader.onload();
+        });
+
+        function updateSavedQuestions() {
+            const c = document.getElementById('saved-questions'); c.innerHTML = '';
+            if (savedQuestions.length === 0) return c.innerHTML = '<p>No saved questions yet.</p>';
+            savedQuestions.forEach((q, i) => {
+                c.innerHTML += `<div class="question-item"><strong>Q${i + 1}:</strong> ${q.question}<br>
+    <em>Options:</em> ${q.options.join(', ')}<br><em>Correct:</em> Option ${q.correct}<br><em>Time:</em> ${q.timeLimit}s
+    ${q.video ? `<br><video controls src="${q.video}"></video>` : ''}
+    <button onclick="deleteQuestion(${i})">Delete</button></div>`;
+            });
+        }
+
+        function deleteQuestion(i) { savedQuestions.splice(i, 1); localStorage.setItem('savedQuestions', JSON.stringify(savedQuestions)); updateSavedQuestions(); }
+
+        function updateProgressDashboard() {
+            const c = document.getElementById('progress-grid'); c.innerHTML = '';
+            users.filter(u => !excludedUsers.includes(u.username.toLowerCase())).forEach(u => {
+                const deg = (u.score / 100) * 360;
+                c.innerHTML += `<div class="student-card"><strong>${u.username}</strong><br>Class: ${u.userClass}
+    <div class="progress-circle" style="background: conic-gradient(#00ff99 0deg ${deg}deg, rgba(255,255,255,0.1) ${deg}deg 360deg);" data-score="${u.score}"></div></div>`;
+            });
+        }
+
+        function updateLeaderboard() {
+            const board = document.getElementById("leaderboard"); board.innerHTML = '';
+            const filteredUsers = users.filter(u => !excludedUsers.includes(u.username.toLowerCase()));
+            if (filteredUsers.length === 0) return board.innerHTML = '<p>No students yet.</p>';
+            let sorted = [...filteredUsers].sort((a, b) => b.score - a.score).slice(0, 3);
+            sorted.forEach((u, i) => {
+                let cls = i === 0 ? 'gold' : i === 1 ? 'silver' : 'bronze';
+                let badge = i === 0 ? '🥇 Gold' : i === 1 ? '🥈 Silver' : '🥉 Bronze';
+                board.innerHTML += `<div class="batch ${cls}">${badge} - ${u.username} (${u.score}%)</div>`;
+            });
+        }
+
+        function sendResponse() {
+            const r = document.getElementById("teacher-response").value.trim();
+            if (!r) return alert("Type a response!");
+            document.getElementById("doubt-list").innerHTML += `<div class="doubt-message">${r}</div>`;
+            document.getElementById("teacher-response").value = "";
+        }
+
+        updateSavedQuestions();
+    </script>
+</body>
+
+</html>

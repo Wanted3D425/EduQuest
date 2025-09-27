@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Level Map</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
+
+  <style>
+    /* --- Theme Vars --- */
+    :root {
+      --font-main: 'Luckiest Guy', cursive;
+      --color-yellow: #ffc700;
+      --color-dark-yellow: #d1a302;
+      --color-green: #2ecc71;
+      --color-dark-green: #27ae60;
+      --color-purple: #8e44ad;
+      --color-red: #e74c3c;
+      --color-grey: #58636a;
+      --color-dark-grey: #3d454a;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: sans-serif;
+      background-color: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    /* --- Game Container --- */
+    .game-container {
+      width: 100vw;
+      height: 100vh;
+      background-color: #333;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* --- Top Resource Bar --- */
+    .top-bar {
+      display: flex;
+      justify-content: flex-end; /* Pushes the single item to the right */
+      align-items: center;
+      padding: 5px 15px;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 10;
+    }
+
+    /* --- MODIFICATION: Renamed from .restart-btn-top to .home-btn-top --- */
+    .home-btn-top {
+      background-color: var(--color-purple);
+      width: 45px;
+      height: 45px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      font-size: 1.2em;
+      cursor: pointer;
+      border: 2px solid #333;
+      color: white;
+    }
+    .home-btn-top:hover { background-color: #a053c7; }
+
+    /* --- Map Area --- */
+    .map-area {
+      flex-grow: 1;
+      background: url('img11.jpeg') center center / cover no-repeat; /* Using a placeholder background */
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* --- Bottom Nav --- */
+    .bottom-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px 20px;
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      box-sizing: border-box;
+      z-index: 10;
+    }
+    .nav-btn {
+      font-family: var(--font-main);
+      color: #5f3e0c;
+      font-size: 1.8em;
+      background-color: var(--color-yellow);
+      border: 3px solid #fff;
+      box-shadow: 0 5px 0 var(--color-dark-yellow), 0 6px 10px rgba(0,0,0,0.4);
+      border-radius: 15px;
+      padding: 8px 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.1s ease-in-out;
+    }
+    .nav-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 var(--color-dark-yellow);
+    }
+
+    /* Other styles (level markers, modal, etc.) remain unchanged */
+    .level-marker {
+      position: absolute; cursor: pointer; width: 80px; height: 100px;
+      display: flex; flex-direction: column; align-items: center;
+      transition: transform 0.2s ease; user-select: none;
+    }
+    .level-marker:hover { transform: scale(1.1); }
+    .level-marker.locked { cursor: not-allowed; filter: grayscale(50%); }
+    .flag {
+      width: 65px; height: 80px; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; color: white;
+      font-family: var(--font-main); font-size: 2.2em;
+      text-shadow: 2px 2px 3px rgba(0,0,0,0.8);
+      clip-path: polygon(0 0, 100% 0, 100% 75%, 50% 100%, 0 75%);
+    }
+    .level-icon {
+      position: absolute; top: -25px; font-size: 3em;
+      color: #e0e0e0; text-shadow: 2px 2px 2px #222;
+    }
+    .fa-swords { transform: rotate(-15deg); }
+    .fa-check { font-size: 0.8em; }
+    .stars-container {
+      position: absolute; bottom: 25px; font-size: 0.9em;
+      color: var(--color-yellow); text-shadow: 1px 1px 2px #000;
+    }
+    .unlocked .flag { background-color: var(--color-red); }
+    .locked .flag { background-color: var(--color-grey); }
+    .completed .flag { background-color: var(--color-green); }
+    #level-6.unlocked .flag { background-color: var(--color-purple); }
+    #level-1 { top: 25%; left: 10%; }
+    #level-2 { top: 30%; left: 30%; }
+    #level-3 { top: 60%; left: 35%; }
+    #level-4 { top: 50%; left: 50%; }
+    #level-5 { top: 20%; left: 65%; }
+    #level-6 { top: 40%; left: 80%; }
+    .modal-overlay {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6); display: flex; justify-content: center;
+      align-items: center; z-index: 100; opacity: 0; visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+    .modal-overlay.visible { opacity: 1; visibility: visible; }
+    .modal-content {
+      background: var(--color-dark-yellow); padding: 20px 30px; border-radius: 20px;
+      border: 5px solid white; box-shadow: 0 8px 0 #a18002, 0 10px 20px rgba(0,0,0,0.5);
+      text-align: center; font-family: var(--font-main); color: white;
+      text-shadow: 2px 2px 3px rgba(0,0,0,0.5); transform: scale(0.7);
+      transition: transform 0.3s;
+    }
+    .modal-overlay.visible .modal-content { transform: scale(1); }
+    #modal-level-title { font-size: 3em; margin: 0; }
+    #modal-level-stars { font-size: 2em; color: var(--color-yellow); margin: 10px 0; }
+    #modal-level-status { font-size: 1.2em; color: #ffeb99; }
+    .modal-buttons { margin-top: 20px; display: flex; gap: 15px; justify-content: center; }
+    .modal-btn {
+      font-family: var(--font-main); font-size: 1.5em; padding: 10px 25px;
+      border-radius: 10px; border: 3px solid white; cursor: pointer;
+      color: white; transition: all 0.1s ease;
+    }
+    #modal-play-btn { background-color: var(--color-green); box-shadow: 0 4px 0 var(--color-dark-green); }
+    #modal-close-btn { background-color: var(--color-red); box-shadow: 0 4px 0 #c0392b; }
+    #modal-play-btn:disabled { background-color: var(--color-grey); box-shadow: 0 4px 0 var(--color-dark-grey); cursor: not-allowed; }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <header class="top-bar">
+      <!-- --- MODIFICATION: Changed ID, class, and icon for the Home button --- -->
+      <div id="home-btn-top" class="home-btn-top">
+        <i class="fa-solid fa-house"></i>
+      </div>
+    </header>
+
+    <main class="map-area"></main>
+
+    <footer class="bottom-bar">
+      <!-- The bottom button remains a "Restart" button -->
+      <button id="restart-btn-bottom" class="nav-btn">
+        <i class="fa-solid fa-rotate-right"></i> Restart
+      </button>
+    </footer>
+  </div>
+
+  <div id="level-modal" class="modal-overlay">
+    <div class="modal-content">
+      <h2 id="modal-level-title">Level 1</h2>
+      <div id="modal-level-stars"></div>
+      <p id="modal-level-status">Ready to play?</p>
+      <div class="modal-buttons">
+        <button id="modal-play-btn" class="modal-btn">Play</button>
+        <button id="modal-close-btn" class="modal-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Central key for localStorage ---
+    const progressKey = 'myMathGameProgress';
+
+    // --- GAME STATE ---
+    const initialLevelsState = [
+      { id: 1, status: 'unlocked', stars: 0, file: 'map 1 level 1.html' },
+      { id: 2, status: 'locked', stars: 0, file: 'map 1 level 2.html' }, 
+      { id: 3, status: 'locked', stars: 0, file: 'map 1 level 3.html' }, 
+      { id: 4, status: 'locked', stars: 0, file: 'map 1 level 4.html' }, 
+      { id: 5, status: 'locked', stars: 0, file: 'map 1 level 5.html' }, 
+      { id: 6, status: 'locked', stars: 0, file: 'map 1 level 6.html' },
+    ];
+    
+    let levelsData;
+
+    // DOM Elements
+    const mapArea = document.querySelector('.map-area');
+    const modal = document.getElementById('level-modal');
+    const modalTitle = document.getElementById('modal-level-title');
+    const modalStars = document.getElementById('modal-level-stars');
+    const modalStatus = document.getElementById('modal-level-status');
+    const modalPlayBtn = document.getElementById('modal-play-btn');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+
+    // Functions for loading, saving, rendering, etc. remain unchanged...
+    function loadProgress() {
+      const savedProgress = localStorage.getItem(progressKey);
+      if (savedProgress) {
+        levelsData = JSON.parse(savedProgress);
+      } else {
+        levelsData = JSON.parse(JSON.stringify(initialLevelsState));
+        saveProgress();
+      }
+    }
+
+    function saveProgress() {
+      localStorage.setItem(progressKey, JSON.stringify(levelsData));
+    }
+
+    function renderLevels() {
+      mapArea.innerHTML = '';
+      levelsData.forEach(level => {
+        const marker = document.createElement('div');
+        marker.id = `level-${level.id}`;
+        marker.className = `level-marker ${level.status}`;
+        marker.dataset.levelId = level.id;
+        let iconHtml = '';
+        if (level.status === 'unlocked') iconHtml = `<div class="level-icon"><i class="fa-solid fa-swords"></i></div>`;
+        else if (level.status === 'completed') iconHtml = `<div class="level-icon"><i class="fa-solid fa-check"></i></div>`;
+        let starsHtml = '<div class="stars-container">';
+        for (let i = 0; i < 3; i++) {
+          starsHtml += `<i class="fa-${i < level.stars ? 'solid' : 'regular'} fa-star"></i>`;
+        }
+        starsHtml += '</div>';
+        let flagContent = `<span>${level.id}</span>`;
+        if (level.status === 'locked') flagContent += `<i class="fa-solid fa-lock lock-icon"></i>`;
+        marker.innerHTML = `${iconHtml}<div class="flag">${flagContent}</div>${starsHtml}`;
+        mapArea.appendChild(marker);
+      });
+      addLevelClickListeners();
+    }
+
+    function addLevelClickListeners() {
+      document.querySelectorAll('.level-marker').forEach(marker => {
+        marker.addEventListener('click', () => {
+          const levelId = parseInt(marker.dataset.levelId);
+          const levelData = levelsData.find(l => l.id === levelId);
+          if (levelData && levelData.status !== 'locked') {
+            openLevelModal(levelData);
+          }
+        });
+      });
+    }
+
+    function openLevelModal(levelData) {
+      modalTitle.textContent = levelData.id === 6 ? `Boss Level ${levelData.id}` : `Level ${levelData.id}`;
+      modalStars.innerHTML = '';
+      for (let i = 0; i < 3; i++) {
+        modalStars.innerHTML += `<i class="fa-${i < levelData.stars ? 'solid' : 'regular'} fa-star"></i>`;
+      }
+      modalPlayBtn.disabled = (levelData.status === 'completed');
+      modalStatus.textContent = (levelData.status === 'completed') ? 'Level Complete!' : 'Ready to Play!';
+      modalPlayBtn.onclick = () => {
+        window.location.href = levelData.file;
+      };
+      modal.classList.add('visible');
+    }
+    
+    function closeLevelModal() { modal.classList.remove('visible'); }
+    
+    function restartGame() {
+      localStorage.removeItem(progressKey);
+      window.location.reload();
+    }
+
+    function initGame() {
+      loadProgress(); 
+      renderLevels(); 
+
+      modalCloseBtn.addEventListener('click', closeLevelModal);
+      modal.addEventListener('click', (e) => { if (e.target === modal) closeLevelModal(); });
+
+      // --- MODIFICATION: Update event listeners for the new Home button ---
+      const homeBtnTop = document.getElementById('home-btn-top');
+      const restartBtnBottom = document.getElementById('restart-btn-bottom');
+      
+      homeBtnTop.addEventListener('click', () => {
+        // Navigate to your homepage (assuming it's named index.html)
+        window.location.href = 'index.html'; 
+      });
+
+      // The bottom button still restarts the game
+      restartBtnBottom.addEventListener('click', restartGame);
+    }
+
+    document.addEventListener('DOMContentLoaded', initGame);
+  </script>
+</body>
+</html>
